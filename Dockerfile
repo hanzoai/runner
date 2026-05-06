@@ -7,11 +7,12 @@ ARG DOCTL_VERSION=1.124.0
 ARG KUSTOMIZE_VERSION=v5.5.0
 ARG HELM_VERSION=v3.16.4
 
+SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
+
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
       ca-certificates curl jq git unzip make gnupg openssh-client; \
-    rm -rf /var/lib/apt/lists/*; \
     arch="$(dpkg --print-architecture)"; \
     curl -fsSLo /usr/local/bin/kubectl \
       "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${arch}/kubectl"; \
@@ -22,12 +23,19 @@ RUN set -eux; \
       | tar -xz -C /usr/local/bin kustomize; \
     curl -fsSL "https://get.helm.sh/helm-${HELM_VERSION}-linux-${arch}.tar.gz" \
       | tar -xz --strip-components=1 -C /usr/local/bin "linux-${arch}/helm"; \
-    type -p curl >/dev/null; \
+    install -m 0755 -d /etc/apt/keyrings; \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-      | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg; \
-    echo "deb [arch=${arch} signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+      | gpg --dearmor -o /etc/apt/keyrings/githubcli-archive-keyring.gpg; \
+    chmod 0644 /etc/apt/keyrings/githubcli-archive-keyring.gpg; \
+    echo "deb [arch=${arch} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
       > /etc/apt/sources.list.d/github-cli.list; \
-    apt-get update; apt-get install -y --no-install-recommends gh; \
-    rm -rf /var/lib/apt/lists/*
+    apt-get update; \
+    apt-get install -y --no-install-recommends gh; \
+    rm -rf /var/lib/apt/lists/*; \
+    kubectl version --client=true; \
+    doctl version; \
+    kustomize version; \
+    helm version --short; \
+    gh --version | head -1
 
 USER runner
