@@ -12,7 +12,10 @@ SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      ca-certificates curl jq git unzip make gnupg openssh-client; \
+      ca-certificates curl jq git unzip make gnupg openssh-client \
+      build-essential pkg-config \
+      gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross \
+      musl-tools; \
     arch="$(dpkg --print-architecture)"; \
     curl -fsSLo /usr/local/bin/kubectl \
       "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${arch}/kubectl"; \
@@ -36,6 +39,8 @@ RUN set -eux; \
     doctl version; \
     kustomize version; \
     helm version --short; \
-    gh --version | head -1
+    gh --version | head -1; \
+    aarch64-linux-gnu-gcc --version | head -1; \
+    musl-gcc --version | head -1
 
 USER runner
