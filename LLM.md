@@ -12,8 +12,13 @@ amd64-host → arm64-target cross toolchain (`gcc-aarch64-linux-gnu`,
 workflows can cross-compile CGO binaries (BLST, etc.) without per-job
 `apt-get install`.
 
-Published as `ghcr.io/hanzoai/runner:vX.Y.Z` on tag pushes via
-the canonical `hanzoai/.github/docker-build.yml` reusable workflow.
+Published as `ghcr.io/hanzoai/runner:X.Y.Z` on tag pushes via
+the canonical `hanzoai/.github/docker-build.yml` reusable workflow
+(`type=semver,pattern={{version}}` strips the `v` prefix).
+
+Current: `0.1.1`. All four ARC scale sets on `do-sfo3-hanzo-k8s`
+(`hanzo-build-linux-amd64`, `hanzo-deploy-linux-amd64`,
+`lux-build-linux-amd64`, `zoo-build-linux-amd64`) are pinned to this tag.
 
 ## Why
 
