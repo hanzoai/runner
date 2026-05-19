@@ -6,7 +6,11 @@ scale sets on `do-sfo3-hanzo-k8s`.
 Base: `ghcr.io/actions/actions-runner:latest`
 
 Adds: `kubectl`, `doctl`, `kustomize`, `helm`, `gh`, `jq`, `git`, `make`,
-`unzip`, `openssh-client`.
+`unzip`, `openssh-client`, `build-essential`, `pkg-config`, and the
+amd64-host → arm64-target cross toolchain (`gcc-aarch64-linux-gnu`,
+`g++-aarch64-linux-gnu`, `libc6-dev-arm64-cross`) plus `musl-tools` so
+workflows can cross-compile CGO binaries (BLST, etc.) without per-job
+`apt-get install`.
 
 Published as `ghcr.io/hanzoai/runner:vX.Y.Z` on tag pushes via
 the canonical `hanzoai/.github/docker-build.yml` reusable workflow.
